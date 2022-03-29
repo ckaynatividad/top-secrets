@@ -11,4 +11,12 @@ describe('top-secrets routes', () => {
   afterAll(() => {
     pool.end();
   });
+
+  it('signs up user via post', async () => {
+    const res = await request(app)
+      .post('/api/v1/auth/signup')
+      .send({ username: 'omelette', password: 'hehe' });
+
+    expect(res.body).toEqual({ id: expect.any(String), username: 'omelette' });
+  });
 });
