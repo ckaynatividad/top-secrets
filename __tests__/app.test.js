@@ -69,23 +69,4 @@ describe('top-secrets routes', () => {
     expect(res.status).toEqual(200);
   });
 
-  it('allows user to create secret', async () => {
-    const expected = {
-      title: 'Hello',
-      content: 'test',
-      user_id: 1,
-    };
-    const user = await UserService.create({
-      id: '1',
-      username: 'omelette',
-      password: 'hehe',
-    });
-    await agent
-      .post('/api/v1/auth/signin')
-      .send({ id: user.id, username: user.username, password: user.password });
-    const res = await agent.post('/api/v1/secrets').send(expected);
-    console.log(user);
-
-    expect(res.body).toEqual({ id: expect.any(String), ...expected });
-  });
 });
