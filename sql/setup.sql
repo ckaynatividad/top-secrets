@@ -13,5 +13,5 @@ CREATE TABLE secrets (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     title TEXT NOT NULL,
     content TEXT NOT NULL,
-    user_id BIGINT REFERENCES users(id)
+    created_at TIMESTAMP
 );
