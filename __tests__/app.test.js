@@ -4,6 +4,8 @@ const request = require('supertest');
 const app = require('../lib/app');
 const UserService = require('../lib/services/UserService');
 
+const agent = request.agent(app);
+
 describe('top-secrets routes', () => {
   beforeEach(() => {
     return setup(pool);
@@ -26,13 +28,28 @@ describe('top-secrets routes', () => {
       username: 'omelette',
       password: 'hehe',
     });
-    const res = await request(app)
+    const res = await agent
       .post('/api/v1/auth/signin')
       .send({ username: 'omelette', password: 'hehe' });
 
     expect(res.body).toEqual({
       message: 'youre in',
       user,
+    });
+  });
+
+  it('logsout user via delete', async () => {
+    const user = await UserService.create({
+      username: 'omelette',
+      password: 'hehe',
+    });
+    await agent
+      .post('/api/v1/auth/signin')
+      .send({ username: user.username, password: user.password });
+    const res = await agent.delete('/api/v1/auth/sessions');
+    expect(res.body).toEqual({
+      message: 'signed out!',
+      success: true,
     });
   });
 });
