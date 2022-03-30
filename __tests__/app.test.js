@@ -69,6 +69,7 @@ describe('top-secrets routes', () => {
     expect(res.status).toEqual(200);
   });
 
+
   it('sets current user', async () => {
     await UserService.create({
       username: 'omelette',
@@ -124,4 +125,5 @@ describe('top-secrets routes', () => {
 
     expect(res.body).toEqual({ id: expect.any(String), ...expected });
   });
+
 });
