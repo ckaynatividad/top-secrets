@@ -52,4 +52,20 @@ describe('top-secrets routes', () => {
       success: true,
     });
   });
+
+  it('allows user to view secrets', async () => {
+    await UserService.create({
+      username: 'omelette',
+      password: 'hehe',
+    });
+
+    let res = await agent.get('/api/v1/secrets');
+    expect(res.status).toEqual(401);
+
+    await agent
+      .post('/api/v1/auth/signin')
+      .send({ username: 'omelette', password: 'hehe' });
+    res = await agent.get('/api/v1/secrets');
+    expect(res.status).toEqual(200);
+  });
 });
