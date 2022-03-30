@@ -69,6 +69,26 @@ describe('top-secrets routes', () => {
     expect(res.status).toEqual(200);
   });
 
+  it('sets current user', async () => {
+    await UserService.create({
+      username: 'omelette',
+      password: 'hehe',
+    });
+
+    await agent
+      .post('/api/v1/auth/signin')
+      .send({ username: 'omelette', password: 'hehe' });
+
+    const res = await agent.get('/api/v1/auth/me');
+
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      username: 'omelette',
+      exp: expect.any(Number),
+      iat: expect.any(Number),
+    });
+  });
+
   it('protects routes using authenticate', async () => {
     await UserService.create({
       username: 'omelette',
