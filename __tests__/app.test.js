@@ -104,4 +104,24 @@ describe('top-secrets routes', () => {
       message: 'Please login first',
     });
   });
+
+  it('allows user to create secret', async () => {
+    const expected = {
+      title: 'Test',
+      content: 'Test content',
+      created_at: expect.any(String),
+    };
+    await UserService.create({
+      username: 'omelette',
+      password: 'hehe',
+    });
+
+    await agent
+      .post('/api/v1/auth/signin')
+      .send({ username: 'omelette', password: 'hehe' });
+    await agent.get('/api/v1/secrets');
+    const res = await agent.post('/api/v1/secrets').send(expected);
+
+    expect(res.body).toEqual({ id: expect.any(String), ...expected });
+  });
 });
