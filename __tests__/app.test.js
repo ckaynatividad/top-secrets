@@ -69,4 +69,61 @@ describe('top-secrets routes', () => {
     expect(res.status).toEqual(200);
   });
 
+
+  it('sets current user', async () => {
+    await UserService.create({
+      username: 'omelette',
+      password: 'hehe',
+    });
+
+    await agent
+      .post('/api/v1/auth/signin')
+      .send({ username: 'omelette', password: 'hehe' });
+
+    const res = await agent.get('/api/v1/auth/me');
+
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      username: 'omelette',
+      exp: expect.any(Number),
+      iat: expect.any(Number),
+    });
+  });
+
+  it('protects routes using authenticate', async () => {
+    await UserService.create({
+      username: 'omelette',
+      password: 'hehe',
+    });
+
+    await agent
+      .post('/api/v1/auth/signin')
+      .send({ username: 'omelette', password: 'hehe' });
+    const res = await agent.get('/api/v1/auth/private');
+
+    expect(res.body).toEqual({
+      message: 'Please login first',
+    });
+  });
+
+  it('allows user to create secret', async () => {
+    const expected = {
+      title: 'Test',
+      content: 'Test content',
+      created_at: expect.any(String),
+    };
+    await UserService.create({
+      username: 'omelette',
+      password: 'hehe',
+    });
+
+    await agent
+      .post('/api/v1/auth/signin')
+      .send({ username: 'omelette', password: 'hehe' });
+    await agent.get('/api/v1/secrets');
+    const res = await agent.post('/api/v1/secrets').send(expected);
+
+    expect(res.body).toEqual({ id: expect.any(String), ...expected });
+  });
+
 });
