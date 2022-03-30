@@ -68,4 +68,20 @@ describe('top-secrets routes', () => {
     res = await agent.get('/api/v1/secrets');
     expect(res.status).toEqual(200);
   });
+
+  it('protects routes using authenticate', async () => {
+    await UserService.create({
+      username: 'omelette',
+      password: 'hehe',
+    });
+
+    await agent
+      .post('/api/v1/auth/signin')
+      .send({ username: 'omelette', password: 'hehe' });
+    const res = await agent.get('/api/v1/auth/private');
+
+    expect(res.body).toEqual({
+      message: 'Please login first',
+    });
+  });
 });
