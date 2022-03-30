@@ -68,4 +68,5 @@ describe('top-secrets routes', () => {
     res = await agent.get('/api/v1/secrets');
     expect(res.status).toEqual(200);
   });
+
 });
